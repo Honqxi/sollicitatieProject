@@ -2,6 +2,7 @@ package be.sollicitatie.project.sollicitatieproject.controller;
 
 import be.sollicitatie.project.sollicitatieproject.domain.Person;
 import be.sollicitatie.project.sollicitatieproject.Service.PersonService;
+import be.sollicitatie.project.sollicitatieproject.domain.dto.PersonRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class PersonController {
 
     @PostMapping()
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Person> create(@RequestBody Person person){
+    public ResponseEntity<Person> create(@RequestBody PersonRequest person){
         Person createdPerson = personService.create(person);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPerson);
     }

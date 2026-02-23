@@ -2,6 +2,7 @@ package be.sollicitatie.project.sollicitatieproject.controller;
 
 import be.sollicitatie.project.sollicitatieproject.domain.Fine;
 import be.sollicitatie.project.sollicitatieproject.Service.FineService;
+import be.sollicitatie.project.sollicitatieproject.domain.dto.FineRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +19,10 @@ public class FineController {
 
     private final FineService fineService;
 
-    @PostMapping
+    @PostMapping("/{personId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Fine> create(@RequestBody Fine fine) {
-        Fine created = fineService.create(fine);
+    public ResponseEntity<Fine> create(@PathVariable Long personId, @RequestBody FineRequest fine) {
+        Fine created = fineService.create(personId, fine);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 

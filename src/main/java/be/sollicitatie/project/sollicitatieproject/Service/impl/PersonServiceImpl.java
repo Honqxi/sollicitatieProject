@@ -1,6 +1,7 @@
 package be.sollicitatie.project.sollicitatieproject.Service.impl;
 
 import be.sollicitatie.project.sollicitatieproject.domain.Person;
+import be.sollicitatie.project.sollicitatieproject.domain.dto.PersonRequest;
 import be.sollicitatie.project.sollicitatieproject.repository.IPersonRepository;
 import be.sollicitatie.project.sollicitatieproject.Service.PersonService;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +16,12 @@ public class PersonServiceImpl implements PersonService {
     private final IPersonRepository personRepository;
 
     @Override
-    public Person create(Person person) {
-        return personRepository.save(person);
+    public Person create(PersonRequest person) {
+        Person newPerson = new Person();
+        newPerson.setFirstName(person.getFirstName());
+        newPerson.setLastName(person.getLastName());
+        newPerson.setEmail(person.getEmail());
+        return personRepository.save(newPerson);
     }
 
     @Override

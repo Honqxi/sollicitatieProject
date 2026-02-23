@@ -1,8 +1,11 @@
 package be.sollicitatie.project.sollicitatieproject.Service.impl;
 
 import be.sollicitatie.project.sollicitatieproject.domain.Fine;
+import be.sollicitatie.project.sollicitatieproject.domain.Person;
+import be.sollicitatie.project.sollicitatieproject.domain.dto.FineRequest;
 import be.sollicitatie.project.sollicitatieproject.repository.IFineRepository;
 import be.sollicitatie.project.sollicitatieproject.Service.FineService;
+import be.sollicitatie.project.sollicitatieproject.repository.IPersonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +17,18 @@ import java.util.Map;
 public class FineServiceImpl implements FineService {
 
     private final IFineRepository fineRepository;
+    private final IPersonRepository personRepository;
 
     @Override
-    public Fine create(Fine fine) {
-        return fineRepository.save(fine);
+    public Fine create(Long personId, FineRequest fine) {
+        Fine newFine = new Fine();
+        newFine.setAmount(fine.getAmount());
+        newFine.setCity(fine.getCity());
+        newFine.setStatus(fine.getStatus());
+
+        Person person = personRepository.findById(personId).orElseThrow(() -> new RuntimeException("Person with id " + personId + " not found"));
+        newFine.setPerson(person);
+        return fineRepository.save(newFine);
     }
 
     @Override
