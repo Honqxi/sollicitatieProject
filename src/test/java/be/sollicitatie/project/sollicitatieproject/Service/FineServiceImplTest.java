@@ -3,8 +3,10 @@ package be.sollicitatie.project.sollicitatieproject.Service;
 import be.sollicitatie.project.sollicitatieproject.domain.Fine;
 import be.sollicitatie.project.sollicitatieproject.domain.FineStatus;
 import be.sollicitatie.project.sollicitatieproject.domain.Person;
+import be.sollicitatie.project.sollicitatieproject.domain.dto.FineRequest;
 import be.sollicitatie.project.sollicitatieproject.repository.IFineRepository;
 import be.sollicitatie.project.sollicitatieproject.Service.impl.FineServiceImpl;
+import be.sollicitatie.project.sollicitatieproject.repository.IPersonRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +28,8 @@ import static org.mockito.Mockito.when;
 class FineServiceImplTest {
     @Mock
     private IFineRepository fineRepository;
+    @Mock
+    private IPersonRepository personRepository;
     @InjectMocks
     private FineServiceImpl fineService;
 
@@ -108,9 +112,15 @@ class FineServiceImplTest {
         savedFine.setStatus(FineStatus.OPEN);
         savedFine.setAmount(110);
 
+        FineRequest fineRequest = new FineRequest();
+        fineRequest.setCity("Sint-Truiden");
+        fineRequest.setStatus(FineStatus.OPEN);
+        fineRequest.setAmount(99);
+
+        when(personRepository.findById(1L)).thenReturn(Optional.ofNullable(person));
         when(fineRepository.save(fine)).thenReturn(savedFine);
 
-        Fine result = fineService.create(fine);
+        Fine result = fineService.create(person.getId(), fineRequest);
 
         assertEquals(result, savedFine);
         verify(fineRepository).save(fine);

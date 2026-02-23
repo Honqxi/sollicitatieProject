@@ -4,6 +4,7 @@ import be.sollicitatie.project.sollicitatieproject.domain.Fine;
 import be.sollicitatie.project.sollicitatieproject.domain.FineStatus;
 import be.sollicitatie.project.sollicitatieproject.domain.Person;
 import be.sollicitatie.project.sollicitatieproject.Service.FineService;
+import be.sollicitatie.project.sollicitatieproject.domain.dto.FineRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +98,7 @@ class FineControllerTest {
         mockMvc.perform(get("/api/fines/1")
                         .with(user("user").roles("USER")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.Id").value(1))
+                .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.city").value("Hasselt"));
     }
 
@@ -160,28 +161,37 @@ class FineControllerTest {
 
     @Test
     void shouldCreateFineAsAdmin() throws Exception {
-        Fine fine = new Fine();
-        fine.setPerson(person);
-        fine.setId(1L);
-        fine.setCity("Hasselt");
-        fine.setStatus(FineStatus.OPEN);
-        fine.setAmount(99);
+        FineRequest fineRequest = new FineRequest();
+        fineRequest.setCity("Hasselt");
+        fineRequest.setStatus(FineStatus.OPEN);
+        fineRequest.setAmount(99);
 
-        when(fineService.create(any(Fine.class))).thenReturn(fine);
+        Fine fine = Fine.builder()
+                .id(1L)
+                .city(fineRequest.getCity())
+                .amount(fineRequest.getAmount())
+                .status(fineRequest.getStatus())
+                .person(person)
+                .build();
 
-        mockMvc.perform(post("/api/fines")
+        when(fineService.create(eq(person.getId()), any(FineRequest.class))).thenReturn(fine);
+
+        mockMvc.perform(post("/api/fines/{personId}", person.getId())
                         .with(user("admin").roles("ADMIN"))
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                {
-                  "city": "Hasselt",
-                  "amount": 50
-                }
-            """))
+                        {
+                          "city": "Hasselt",
+                          "amount": 99,
+                          "status": "OPEN"
+                        }
+                    """))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.Id").value(1L))
-                .andExpect(jsonPath("$.city").value("Hasselt"));
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.city").value("Hasselt"))
+                .andExpect(jsonPath("$.amount").value(99))
+                .andExpect(jsonPath("$.status").value("OPEN"));
     }
 
     @Test

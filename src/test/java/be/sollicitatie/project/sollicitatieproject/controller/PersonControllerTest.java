@@ -2,11 +2,12 @@ package be.sollicitatie.project.sollicitatieproject.controller;
 
 import be.sollicitatie.project.sollicitatieproject.domain.Person;
 import be.sollicitatie.project.sollicitatieproject.Service.PersonService;
+import be.sollicitatie.project.sollicitatieproject.domain.dto.PersonRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -61,13 +62,13 @@ class PersonControllerTest {
         mockMvc.perform(get("/api/persons/1")
                         .with(user("user").roles("USER")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.Id").value(1))
+                .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.email").value("libioullejoakim@gmail.com"));
     }
 
     @Test
     void shouldCreatePersonAsAdmin() throws Exception {
-        when(personService.create(any(Person.class))).thenReturn(person);
+        when(personService.create(any(PersonRequest.class))).thenReturn(person);
 
         mockMvc.perform(post("/api/persons")
                         .with(user("admin").roles("ADMIN"))

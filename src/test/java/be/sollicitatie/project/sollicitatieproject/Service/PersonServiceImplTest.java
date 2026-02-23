@@ -1,6 +1,7 @@
 package be.sollicitatie.project.sollicitatieproject.Service;
 
 import be.sollicitatie.project.sollicitatieproject.domain.Person;
+import be.sollicitatie.project.sollicitatieproject.domain.dto.PersonRequest;
 import be.sollicitatie.project.sollicitatieproject.repository.IPersonRepository;
 import be.sollicitatie.project.sollicitatieproject.Service.impl.PersonServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -78,19 +79,32 @@ class PersonServiceImplTest {
     }
 
     @Test
-    void shouldCreatePerson(){
-        Person savedPerson = new Person();
-        savedPerson.setId(1L);
-        savedPerson.setEmail("libioullejoakim@gmail.com");
-        savedPerson.setFirstName("Joakim");
-        savedPerson.setLastName("Libioulle");
+    void shouldCreatePerson() {
+        // DTO invullen
+        PersonRequest personRequest = new PersonRequest();
+        personRequest.setEmail("libioullejoakim@gmail.com");
+        personRequest.setFirstName("Joakim");
+        personRequest.setLastName("Libioulle");
 
-        when(personRepository.save(person)).thenReturn(savedPerson);
+        // Verwachte entity die repository zal teruggeven
+        Person savedPerson = Person.builder()
+                .id(1L)
+                .email(personRequest.getEmail())
+                .firstName(personRequest.getFirstName())
+                .lastName(personRequest.getLastName())
+                .build();
 
-        Person result = personService.create(person);
+        // Mock repository
+        when(personRepository.save(any(Person.class))).thenReturn(savedPerson);
 
-        assertEquals(result, savedPerson);
-        verify(personRepository).save(person);
+        // Service aanroepen
+        Person result = personService.create(personRequest);
+
+        // Asserties op het resultaat
+        assertEquals(personRequest.getEmail(), result.getEmail());
+        assertEquals(personRequest.getFirstName(), result.getFirstName());
+        assertEquals(personRequest.getLastName(), result.getLastName());
+        assertNotNull(result.getId()); // Check dat ID is gegenereerd
     }
 
     @Test
