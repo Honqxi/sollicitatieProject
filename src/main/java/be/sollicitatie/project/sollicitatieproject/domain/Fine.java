@@ -1,12 +1,13 @@
 package be.sollicitatie.project.sollicitatieproject.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Entity
-@Getter
-@Setter
+@Entity(name = "fine")
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
 public class Fine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
