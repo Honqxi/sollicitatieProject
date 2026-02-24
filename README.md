@@ -3,8 +3,8 @@
 Spring Boot REST API for managing fines and persons.
 
 ## Tech stack
-- Java 25
-- Spring Boot 4
+- Java 21
+- Spring Boot 3
 - Spring Security (Basic Auth, Role-based)
 - Spring Data JPA
 - MySQL
